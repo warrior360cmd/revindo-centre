@@ -18,6 +18,7 @@
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0B1F1D;--bg2:#102926;--carte:#132E2B;--ligne:#1F403C;--encre:#EAF4F1;--doux:#9DB5B0;--teal:#2CC2B2;--teal2:#5FE0CF;--profond:#0A4D48;--corail:#FF8A63;--ok:#3CCB97;--alerte:#F2B04F;--ko:#FF7564;--ocre:#E2B05A;--prune:#B497DA;--gris:#5E7774;--ombre:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.25);color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#0B1F1D;--bg2:#102926;--carte:#132E2B;--ligne:#1F403C;--encre:#EAF4F1;--doux:#9DB5B0;--teal:#2CC2B2;--teal2:#5FE0CF;--profond:#0A4D48;--corail:#FF8A63;--ok:#3CCB97;--alerte:#F2B04F;--ko:#FF7564;--ocre:#E2B05A;--prune:#B497DA;--gris:#5E7774;--ombre:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.25);color-scheme:dark}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html,body{margin:0}
 body{background:var(--bg);color:var(--encre);font:15px/1.55 Inter,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;padding:0 16px calc(32px + env(safe-area-inset-bottom,0px))}
 body::before{content:"";position:fixed;inset:-20% -20% auto;height:70vh;z-index:-1;pointer-events:none;background:radial-gradient(40% 50% at 15% 10%,color-mix(in srgb,var(--teal2) 14%,transparent),transparent 70%),radial-gradient(35% 45% at 90% 0%,color-mix(in srgb,var(--corail) 10%,transparent),transparent 70%)}
@@ -68,6 +69,7 @@ svg text{fill:var(--doux);font:11px Inter,system-ui,sans-serif}
 .legende{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--doux);margin-top:10px}
 .legende b{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
 .duo{display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:center}
+#donut{width:100%;max-width:150px;margin:auto}
 .cycle{display:grid;grid-template-columns:54px 1fr;gap:12px;padding:12px 0;border-top:1px solid var(--ligne)}
 .cycle:first-child{border-top:0}
 .cycle .h{font:600 13px "JetBrains Mono",monospace;color:var(--doux);padding-top:2px}
@@ -236,7 +238,7 @@ function rendre(d) {
   const kpis = [
     ["Boutiques trouvées", d.base.total, h.length > 1 ? `+${fr.format(d.base.total - premier.total)} depuis le ${jour(premier.t)}` : "base complète"],
     ["Joignables par e-mail", d.base.qualifiees_email, `sur ${fr.format(d.base.qualifiees)} qualifiées`],
-    ["Messages prêts", d.entonnoir[3].n, `${fr.format(d.envois.brouillons)} adresses déjà en brouillon`],
+    ["À envoyer", d.envois.en_attente ?? d.etat.messages_en_attente_d_envoi ?? 0, `${fr.format(d.entonnoir[3].n)} rédigés · ${fr.format(d.entonnoir[4].n)} déjà en brouillon`],
     ["Apify restant", d.apify.reste == null ? "—" : d.apify.reste.toFixed(2).replace(".", ",") + " $", `sur ${d.apify.forfait} $ ce mois-ci`]
   ];
   $("kpis").replaceChildren(...kpis.map(([t, v, det]) => el("div", { class: "carte kpi" }, el("div", { class: "mono" }, t), el("div", { class: "valeur num" }, typeof v === "number" ? fr.format(v) : v), el("div", { class: "detail" }, det))));
@@ -245,7 +247,7 @@ function rendre(d) {
   $("entonnoir").replaceChildren(...d.entonnoir.map((e, i) => {
     const prec = i ? d.entonnoir[i - 1].n : null;
     const vide = e.n == null;
-    const taux = vide ? (e.note || "non mesuré") : i && prec ? `${(e.n / prec * 100).toFixed(e.n / prec < .1 ? 1 : 0).replace(".", ",")} % de l'étape précédente` : i ? (e.note || "—") : "point de départ";
+    const taux = vide ? (e.note || "non mesuré") : e.n === 0 && e.note ? e.note : i && prec ? `${(e.n / prec * 100).toFixed(e.n / prec < .1 ? 1 : 0).replace(".", ",")} % de l'étape précédente` : i ? (e.note || "—") : "point de départ";
     return el("div", { class: "etape" + (vide ? " vide" : "") }, el("span", { class: "nom" }, `${String.fromCharCode(65 + i)}. ${e.etape}`), el("span", { class: "n num" }, vide ? "—" : fr.format(e.n)),
       el("div", { class: "piste" }, el("i", { style: `width:${vide || !e.n ? 0 : Math.max(1.5, e.n / max * 100)}%` })), el("span", { class: "taux" }, taux));
   }));
@@ -289,7 +291,7 @@ function donut(b) {
 }
 
 function activite(pj) {
-  const jours = Object.keys(pj), W = 320, H = 150, P = { g: 8, b: 22, h: 8 };
+  const jours = Object.keys(pj), W = 320, H = 150, P = { g: 8, b: 22, h: 18 };
   const svg = s("svg", { viewBox: `0 0 ${W} ${H}`, width: "100%", role: "img", "aria-label": "Actions de Gemma par jour" });
   const max = Math.max(1, ...jours.map(j => Object.values(pj[j]).reduce((a, b) => a + b, 0)));
   const pas = (W - P.g * 2) / Math.max(1, jours.length), bw = Math.min(42, pas - 10);
@@ -309,15 +311,16 @@ function budget(ap) {
   const reste = ap.reste ?? 0, R = 56, C = 2 * Math.PI * R, utilisable = Math.max(0, reste - ap.plancher);
   const svg = s("svg", { viewBox: "0 0 132 132", width: "132", height: "132", role: "img", "aria-label": "Budget Apify restant" });
   svg.append(s("circle", { cx: 66, cy: 66, r: R, fill: "none", stroke: "var(--bg2)", "stroke-width": 12 }));
-  svg.append(s("circle", { cx: 66, cy: 66, r: R, fill: "none", stroke: "var(--teal)", "stroke-width": 12, "stroke-linecap": "round", "stroke-dasharray": `${Math.min(1, reste / ap.forfait) * C} ${C}`, transform: "rotate(-90 66 66)" }));
-  svg.append(s("circle", { cx: 66, cy: 66, r: R, fill: "none", stroke: "var(--corail)", "stroke-width": 12, "stroke-dasharray": `${ap.plancher / ap.forfait * C} ${C}`, transform: "rotate(-90 66 66)", opacity: ".55" }));
+  // Deux arcs bout à bout : réserve intouchable (corail) puis part utilisable (teal).
+  const arc = (v, debut, coul) => s("circle", { cx: 66, cy: 66, r: R, fill: "none", stroke: coul, "stroke-width": 12, "stroke-dasharray": `${Math.max(0, v) / ap.forfait * C} ${C}`, "stroke-dashoffset": -debut / ap.forfait * C, transform: "rotate(-90 66 66)" });
+  svg.append(arc(Math.min(reste, ap.plancher), 0, "var(--corail)"), arc(utilisable, ap.plancher, "var(--teal)"));
   const box = el("div", { class: "anneau" }, svg, el("div", { class: "centre" }, el("div", {}, el("b", { class: "num" }, reste.toFixed(2).replace(".", ",") + " $"), el("span", {}, "restants"))));
-  $("budget").replaceChildren(box, el("div", { class: "legende", style: "justify-content:center" }, el("span", {}, el("b", { style: "background:var(--teal)" }), "restant"), el("span", {}, el("b", { style: "background:var(--corail);opacity:.55" }), `réserve ${ap.plancher} $`), el("span", {}, `utilisable : ${utilisable.toFixed(2).replace(".", ",")} $`)));
+  $("budget").replaceChildren(box, el("div", { class: "legende", style: "justify-content:center" }, el("span", {}, el("b", { style: "background:var(--teal)" }), `utilisable ${utilisable.toFixed(2).replace(".", ",")} $`), el("span", {}, el("b", { style: "background:var(--corail)" }), `réserve ${ap.plancher} $`)));
 }
 
 function gestes(d) {
   const g = [];
-  const att = d.etat.messages_en_attente_d_envoi || 0;
+  const att = d.envois.en_attente ?? d.etat.messages_en_attente_d_envoi ?? 0;
   if (att) g.push(["✉", "var(--teal)", `${fr.format(att)} messages prêts à partir`, "Écris « brouillons » à Claude : ils arrivent dans Gmail, tu les envoies depuis le téléphone."]);
   if (!d.etat.envoi_autorise) g.push(["⚿", "var(--alerte)", "Ouvrir l'envoi automatique", "Au retour au PC : le mot de passe d'application Google. Gemma enverra alors seul, 40 par jour au plus."]);
   if (d.fichiers.forums) g.push(["✎", "var(--prune)", `${d.fichiers.reponses_forum} réponses de forum à relire`, `Dans ${d.fichiers.forums} : relis-les, puis poste celles qui te vont depuis ton compte.`]);
@@ -340,8 +343,10 @@ function journal(cycles) {
 }
 
 async function demarrer() {
+  // Lien personnel ouvert sur une page déjà chargée : seul le « # » change, sans rechargement.
+  window.addEventListener("hashchange", () => /k=/.test(location.hash) && location.reload());
   const cle = lireCle();
-  if (!cle) { $("verrou").hidden = false; $("majTexte").textContent = "verrouillé"; return; }
+  if (!cle) { $("verrou").hidden = false; $("majTexte").textContent = "verrouillé"; $("pointDirect").className = "point alerte"; return; }
   let derniere = null;
   const tour = async () => {
     try { derniere = await charger(cle); rendre(derniere); $("app").hidden = false; $("verrou").hidden = true; }
