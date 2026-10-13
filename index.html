@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#FBF8F2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0B1F1D" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Revindo CC">
+<title>Revindo · Centre de contrôle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+:root{--bg:#FBF8F2;--bg2:#F4EFE6;--carte:#FFFFFF;--ligne:#E7E0D3;--encre:#0E3B36;--doux:#5C7370;--teal:#0A7C75;--teal2:#12B0A1;--profond:#0A4D48;--corail:#FF6A3D;--ok:#1FA37A;--alerte:#D9912B;--ko:#D2483A;--ocre:#C58B2C;--prune:#7A5C9E;--gris:#A9B4B2;--ombre:0 1px 2px rgba(14,59,54,.06),0 8px 24px rgba(10,124,117,.08);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0B1F1D;--bg2:#102926;--carte:#132E2B;--ligne:#1F403C;--encre:#EAF4F1;--doux:#9DB5B0;--teal:#2CC2B2;--teal2:#5FE0CF;--profond:#0A4D48;--corail:#FF8A63;--ok:#3CCB97;--alerte:#F2B04F;--ko:#FF7564;--ocre:#E2B05A;--prune:#B497DA;--gris:#5E7774;--ombre:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.25);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0B1F1D;--bg2:#102926;--carte:#132E2B;--ligne:#1F403C;--encre:#EAF4F1;--doux:#9DB5B0;--teal:#2CC2B2;--teal2:#5FE0CF;--profond:#0A4D48;--corail:#FF8A63;--ok:#3CCB97;--alerte:#F2B04F;--ko:#FF7564;--ocre:#E2B05A;--prune:#B497DA;--gris:#5E7774;--ombre:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.25);color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--encre);font:15px/1.55 Inter,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;padding:0 16px calc(32px + env(safe-area-inset-bottom,0px))}
+body::before{content:"";position:fixed;inset:-20% -20% auto;height:70vh;z-index:-1;pointer-events:none;background:radial-gradient(40% 50% at 15% 10%,color-mix(in srgb,var(--teal2) 14%,transparent),transparent 70%),radial-gradient(35% 45% at 90% 0%,color-mix(in srgb,var(--corail) 10%,transparent),transparent 70%)}
+.wrap{max-width:760px;margin:0 auto}
+h1,h2,.display{font-family:"Bricolage Grotesque","Plus Jakarta Sans",system-ui,sans-serif;letter-spacing:-.01em;text-wrap:balance}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--doux)}
+.num{font-variant-numeric:tabular-nums}
+header{position:sticky;top:0;z-index:5;padding:calc(12px + env(safe-area-inset-top,0px)) 0 12px;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px) saturate(1.4);-webkit-backdrop-filter:blur(14px) saturate(1.4);display:flex;align-items:center;gap:12px}
+.marque{width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,var(--teal),var(--teal2));display:grid;place-items:center;color:#FBF8F2;font:800 18px "Bricolage Grotesque",sans-serif;box-shadow:0 6px 18px color-mix(in srgb,var(--teal) 35%,transparent)}
+header .titre{flex:1;min-width:0}
+header h1{font-size:18px;margin:0;line-height:1.1}
+header .sous{font-size:12px;color:var(--doux)}
+.direct{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--doux);background:var(--carte);border:1px solid var(--ligne);padding:5px 10px;border-radius:999px;white-space:nowrap}
+.point{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 color-mix(in srgb,var(--ok) 55%,transparent);animation:pulse 2s infinite}
+.point.alerte{background:var(--alerte)}.point.ko{background:var(--ko);animation:none}
+@keyframes pulse{70%{box-shadow:0 0 0 8px transparent}100%{box-shadow:0 0 0 0 transparent}}
+@media (prefers-reduced-motion:reduce){.point{animation:none}}
+.grille{display:grid;gap:14px;margin-top:6px}
+.carte{background:var(--carte);border:1px solid var(--ligne);border-radius:22px;padding:18px;box-shadow:var(--ombre);min-width:0}
+.carte h2{font-size:17px;margin:0 0 4px}
+.carte .aide{font-size:13px;color:var(--doux);margin:0 0 14px}
+.hero{background:linear-gradient(160deg,var(--profond),#0A7C75 60%,#12B0A1);color:#F3FBF9;border:0;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.18),transparent 65%)}
+.hero .mono{color:rgba(243,251,249,.7)}
+.etat{display:flex;align-items:center;gap:10px;margin:6px 0 2px}
+.etat .display{font-size:30px;font-weight:800;line-height:1.05}
+.hero .point{width:12px;height:12px}
+.derniere{font-size:14px;opacity:.92}
+.pensee{margin:14px 0 0;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);font-size:14px;line-height:1.5}
+.pensee .mono{display:block;margin-bottom:4px}
+.mission{margin-top:16px}
+.barre{height:8px;border-radius:99px;background:rgba(255,255,255,.18);overflow:hidden;margin:8px 0 6px}
+.barre i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#FBF8F2,#FFD2C2)}
+.mission .ligne2{display:flex;justify-content:space-between;gap:10px;font-size:12px;opacity:.85}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.kpi .valeur{font:800 30px/1 "Bricolage Grotesque",sans-serif;margin:8px 0 4px}
+.kpi .detail{font-size:12px;color:var(--doux)}
+.etape{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:baseline;padding:9px 0;border-top:1px dashed var(--ligne)}
+.etape:first-of-type{border-top:0}
+.etape .nom{font-size:14px;font-weight:500}
+.etape .n{font:700 17px "Bricolage Grotesque",sans-serif}
+.etape .piste{grid-column:1/-1;height:10px;border-radius:99px;background:var(--bg2);overflow:hidden}
+.etape .piste i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--teal),var(--teal2));transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.etape .taux{grid-column:1/-1;font-size:12px;color:var(--doux)}
+.etape.vide .n{color:var(--gris)}
+.etape.vide .piste{background:repeating-linear-gradient(90deg,var(--bg2) 0 8px,transparent 8px 14px)}
+svg text{fill:var(--doux);font:11px Inter,system-ui,sans-serif}
+.legende{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--doux);margin-top:10px}
+.legende b{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.duo{display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:center}
+.cycle{display:grid;grid-template-columns:54px 1fr;gap:12px;padding:12px 0;border-top:1px solid var(--ligne)}
+.cycle:first-child{border-top:0}
+.cycle .h{font:600 13px "JetBrains Mono",monospace;color:var(--doux);padding-top:2px}
+.cycle .h small{display:block;font-size:10px;opacity:.8}
+.puce{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;background:color-mix(in srgb,var(--c) 14%,transparent);color:var(--c)}
+.puce::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--c)}
+.par{font-size:11px;color:var(--doux);margin-left:6px}
+.cycle .res{font-size:14px;margin-top:4px}
+.cycle .rai{font-size:13px;color:var(--doux);margin-top:3px;font-style:italic}
+.echec .res{color:var(--ko)}
+.bouton{appearance:none;border:1px solid var(--ligne);background:var(--bg2);color:var(--encre);font:600 14px Inter,sans-serif;padding:11px 14px;border-radius:14px;width:100%;margin-top:10px;cursor:pointer}
+.geste{display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--ligne)}
+.geste:first-child{border-top:0}
+.geste .ic{flex:none;width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 14%,transparent);color:var(--c);font-weight:800}
+.geste p{margin:2px 0 0;font-size:13px;color:var(--doux)}
+.geste strong{font-size:14px}
+footer{text-align:center;font-size:12px;color:var(--doux);margin:22px 0 4px}
+#verrou{min-height:80vh;display:grid;place-items:center;text-align:center}
+#verrou .carte{max-width:380px}
+.anneau{position:relative;width:132px;height:132px;margin:auto}
+.anneau .centre{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+.anneau .centre b{font:800 22px "Bricolage Grotesque",sans-serif;display:block}
+.anneau .centre span{font-size:11px;color:var(--doux)}
+.deux{display:grid;gap:14px}
+@media (min-width:640px){.kpis{grid-template-columns:repeat(4,1fr)}.deux{grid-template-columns:1fr 1fr}}
+@media (max-width:380px){.duo{grid-template-columns:1fr}.etat .display{font-size:26px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="marque">R</div>
+    <div class="titre"><h1>Centre de contrôle</h1><div class="sous">Gemma · pilote de prospection Revindo</div></div>
+    <span class="direct"><span class="point" id="pointDirect"></span><span id="majTexte">chargement…</span></span>
+  </header>
+
+  <section id="verrou" hidden>
+    <div class="carte">
+      <div class="marque" style="margin:0 auto 12px">R</div>
+      <h2>Lien personnel requis</h2>
+      <p class="aide" id="verrouTexte">Les données sont chiffrées. Ouvre ce centre de contrôle avec ton lien personnel : la clé qu'il contient reste sur ton téléphone.</p>
+    </div>
+  </section>
+
+  <main id="app" hidden>
+    <div class="grille">
+      <section class="carte hero">
+        <span class="mono">État de Gemma</span>
+        <div class="etat"><span class="point" id="pointEtat"></span><span class="display" id="etat">—</span></div>
+        <div class="derniere" id="derniere"></div>
+        <div class="pensee"><span class="mono">Raisonnement de Gemma au dernier cycle</span><span id="pensee">—</span></div>
+        <div class="mission">
+          <div class="mono">Mission de 5 jours</div>
+          <div class="barre"><i id="missionBarre" style="width:0"></i></div>
+          <div class="ligne2"><span id="missionPct"></span><span id="missionReste"></span></div>
+        </div>
+      </section>
+
+      <section class="kpis" id="kpis"></section>
+
+      <section class="carte">
+        <h2>De A à Z</h2>
+        <p class="aide">De la boutique trouvée au client payant. Chaque étape ne compte que celles de l'étape d'avant.</p>
+        <div id="entonnoir"></div>
+      </section>
+
+      <div class="deux">
+        <section class="carte">
+          <h2>Croissance de la base</h2>
+          <p class="aide">Boutiques connues et joignables par e-mail, à chaque mesure.</p>
+          <div id="croissance"></div>
+          <div class="legende"><span><b style="background:var(--teal)"></b>Boutiques</span><span><b style="background:var(--corail)"></b>Avec e-mail</span></div>
+        </section>
+        <section class="carte">
+          <h2>Canaux de contact</h2>
+          <p class="aide">Comment chaque boutique peut être jointe.</p>
+          <div class="duo"><div id="donut"></div><div class="legende" id="donutLegende" style="flex-direction:column;margin:0"></div></div>
+        </section>
+      </div>
+
+      <div class="deux">
+        <section class="carte">
+          <h2>Ce que fait Gemma</h2>
+          <p class="aide">Actions par jour, une par cycle d'une heure.</p>
+          <div id="activite"></div>
+          <div class="legende" id="activiteLegende"></div>
+        </section>
+        <section class="carte">
+          <h2>Budget Apify</h2>
+          <p class="aide">Seule dépense : 19 $ par mois. Une réserve de 5 $ n'est jamais entamée.</p>
+          <div id="budget"></div>
+        </section>
+      </div>
+
+      <section class="carte">
+        <h2>Tes gestes</h2>
+        <p class="aide">Ce qui t'attend, faisable depuis ton téléphone.</p>
+        <div id="gestes"></div>
+      </section>
+
+      <section class="carte">
+        <h2>Journal de bord</h2>
+        <p class="aide">Chaque cycle : l'action, qui l'a décidée, pourquoi, et le résultat.</p>
+        <div id="journal"></div>
+        <button class="bouton" id="plus" hidden>Voir les cycles précédents</button>
+      </section>
+    </div>
+    <footer>Chiffré de bout en bout (AES-256) · mis à jour chaque heure par le Mac · aucune adresse e-mail transmise</footer>
+  </main>
+</div>
+
+<script>
+"use strict";
+const ACTIONS = {
+  qualifier:{nom:"Qualifier",c:"var(--teal)"}, approfondir:{nom:"Approfondir",c:"var(--teal2)"},
+  generer_messages:{nom:"Rédiger",c:"var(--corail)"}, envoyer:{nom:"Envoyer",c:"var(--ok)"},
+  veille_forums:{nom:"Forums",c:"var(--prune)"}, rapport:{nom:"Rapport",c:"var(--ocre)"},
+  chercher:{nom:"Chercher (Apify)",c:"var(--alerte)"}, attendre:{nom:"Attendre",c:"var(--gris)"}
+};
+const CLE_STOCKAGE = "revindo-centre-cle";
+const fr = new Intl.NumberFormat("fr-FR");
+const $ = id => document.getElementById(id);
+const el = (tag, attrs = {}, ...enfants) => { const n = document.createElement(tag); for (const [k, v] of Object.entries(attrs)) { if (k === "style") n.style.cssText = v; else if (k === "class") n.className = v; else n.setAttribute(k, v); } for (const e of enfants) n.append(e instanceof Node ? e : document.createTextNode(e)); return n; };
+const NS = "http://www.w3.org/2000/svg";
+const s = (tag, attrs = {}) => { const n = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v); return n; };
+
+function lireCle() {
+  const m = location.hash.match(/k=([A-Za-z0-9_-]{40,})/);
+  if (m) { try { localStorage.setItem(CLE_STOCKAGE, m[1]); } catch (e) {} history.replaceState(null, "", location.pathname); return m[1]; }
+  try { return localStorage.getItem(CLE_STOCKAGE); } catch (e) { return null; }
+}
+const b64 = t => Uint8Array.from(atob(t), c => c.charCodeAt(0));
+const b64url = t => b64(t.replace(/-/g, "+").replace(/_/g, "/") + "=".repeat((4 - t.length % 4) % 4));
+
+async function charger(cle) {
+  const r = await fetch("data.enc?t=" + Date.now(), { cache: "no-store" });
+  if (!r.ok) throw new Error("données indisponibles (" + r.status + ")");
+  const brut = b64((await r.text()).trim());
+  const k = await crypto.subtle.importKey("raw", b64url(cle), "AES-GCM", false, ["decrypt"]);
+  const clair = await crypto.subtle.decrypt({ name: "AES-GCM", iv: brut.slice(0, 12) }, k, brut.slice(12));
+  return JSON.parse(new TextDecoder().decode(clair));
+}
+
+const minutesDepuis = iso => (Date.now() - new Date(iso).getTime()) / 60000;
+const depuis = m => m < 1 ? "à l'instant" : m < 60 ? `il y a ${Math.round(m)} min` : m < 1440 ? `il y a ${Math.floor(m / 60)} h ${String(Math.round(m % 60)).padStart(2, "0")}` : `il y a ${Math.floor(m / 1440)} j`;
+const heure = iso => new Date(iso).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+const jour = iso => new Date(iso).toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" });
+
+function rendre(d) {
+  const age = d.sante.dernier_cycle ? minutesDepuis(d.sante.dernier_cycle) : Infinity;
+  const etat = age < 75 ? ["Gemma travaille", ""] : age < 150 ? ["Cycle en retard", "alerte"] : ["Hors ligne", "ko"];
+  $("etat").textContent = etat[0];
+  $("pointEtat").className = "point " + etat[1]; $("pointDirect").className = "point " + etat[1];
+  const a = ACTIONS[d.sante.action] || { nom: d.sante.action || "—" };
+  $("derniere").textContent = d.sante.dernier_cycle ? `Dernière action : ${a.nom} · ${depuis(age)} · ${d.sante.source === "gemma" ? "décidée par Gemma" : "règle fixe"} · ${d.sante.cycles_gemma}/${d.sante.cycles_vus} cycles décidés par Gemma` : "Aucun cycle encore.";
+  $("pensee").textContent = d.sante.raison ? `« ${d.sante.raison} »` : "—";
+  const debut = new Date(d.mission.debut), fin = new Date(d.mission.fin), now = Date.now();
+  const pct = Math.max(0, Math.min(100, (now - debut) / (fin - debut) * 100));
+  $("missionBarre").style.width = pct.toFixed(1) + "%";
+  $("missionPct").textContent = `${Math.round(pct)} % accompli`;
+  const reste = Math.max(0, (fin - now) / 3600000);
+  $("missionReste").textContent = reste > 0 ? `${Math.floor(reste / 24)} j ${Math.floor(reste % 24)} h restants · fin le ${fin.toLocaleDateString("fr-FR", { day: "numeric", month: "short" })} à ${heure(d.mission.fin)}` : "mission terminée";
+  $("majTexte").textContent = "maj " + heure(d.maj);
+
+  const h = d.historique, premier = h[0] || {};
+  const kpis = [
+    ["Boutiques trouvées", d.base.total, h.length > 1 ? `+${fr.format(d.base.total - premier.total)} depuis le ${jour(premier.t)}` : "base complète"],
+    ["Joignables par e-mail", d.base.qualifiees_email, `sur ${fr.format(d.base.qualifiees)} qualifiées`],
+    ["Messages prêts", d.entonnoir[3].n, `${fr.format(d.envois.brouillons)} adresses déjà en brouillon`],
+    ["Apify restant", d.apify.reste == null ? "—" : d.apify.reste.toFixed(2).replace(".", ",") + " $", `sur ${d.apify.forfait} $ ce mois-ci`]
+  ];
+  $("kpis").replaceChildren(...kpis.map(([t, v, det]) => el("div", { class: "carte kpi" }, el("div", { class: "mono" }, t), el("div", { class: "valeur num" }, typeof v === "number" ? fr.format(v) : v), el("div", { class: "detail" }, det))));
+
+  const max = d.entonnoir[0].n || 1;
+  $("entonnoir").replaceChildren(...d.entonnoir.map((e, i) => {
+    const prec = i ? d.entonnoir[i - 1].n : null;
+    const vide = e.n == null;
+    const taux = vide ? (e.note || "non mesuré") : i && prec ? `${(e.n / prec * 100).toFixed(e.n / prec < .1 ? 1 : 0).replace(".", ",")} % de l'étape précédente` : i ? (e.note || "—") : "point de départ";
+    return el("div", { class: "etape" + (vide ? " vide" : "") }, el("span", { class: "nom" }, `${String.fromCharCode(65 + i)}. ${e.etape}`), el("span", { class: "n num" }, vide ? "—" : fr.format(e.n)),
+      el("div", { class: "piste" }, el("i", { style: `width:${vide || !e.n ? 0 : Math.max(1.5, e.n / max * 100)}%` })), el("span", { class: "taux" }, taux));
+  }));
+
+  $("croissance").replaceChildren(courbe(h));
+  donut(d.base);
+  activite(d.par_jour);
+  budget(d.apify);
+  gestes(d);
+  journal(d.cycles);
+}
+
+function courbe(h) {
+  const W = 320, H = 150, P = { g: 40, d: 8, h: 10, b: 22 };
+  const svg = s("svg", { viewBox: `0 0 ${W} ${H}`, width: "100%", role: "img", "aria-label": "Croissance de la base de prospects" });
+  if (h.length < 2) { const t = s("text", { x: W / 2, y: H / 2, "text-anchor": "middle" }); t.textContent = "La courbe se dessine dès la 2e mesure."; svg.append(t); return svg; }
+  const t0 = new Date(h[0].t).getTime(), t1 = new Date(h[h.length - 1].t).getTime();
+  const ymax = Math.max(...h.map(p => p.total)) * 1.08;
+  const X = t => P.g + (new Date(t).getTime() - t0) / Math.max(1, t1 - t0) * (W - P.g - P.d), Y = v => H - P.b - v / ymax * (H - P.h - P.b);
+  for (const f of [0, .5, 1]) { const v = ymax * f, y = Y(v); svg.append(s("line", { x1: P.g, x2: W - P.d, y1: y, y2: y, stroke: "var(--ligne)", "stroke-dasharray": "3 4" })); const t = s("text", { x: P.g - 6, y: y + 4, "text-anchor": "end" }); t.textContent = fr.format(Math.round(v)); svg.append(t); }
+  for (const [cle, coul] of [["total", "var(--teal)"], ["email", "var(--corail)"]]) {
+    const pts = h.map(p => `${X(p.t).toFixed(1)},${Y(p[cle]).toFixed(1)}`).join(" ");
+    if (cle === "total") svg.append(s("polygon", { points: `${X(h[0].t)},${Y(0)} ${pts} ${X(h[h.length - 1].t)},${Y(0)}`, fill: "var(--teal)", opacity: ".08" }));
+    svg.append(s("polyline", { points: pts, fill: "none", stroke: coul, "stroke-width": 2.5, "stroke-linejoin": "round", "stroke-linecap": "round" }));
+  }
+  for (const [i, anc] of [[0, "start"], [h.length - 1, "end"]]) { const t = s("text", { x: X(h[i].t), y: H - 4, "text-anchor": anc }); t.textContent = jour(h[i].t) + " " + heure(h[i].t); svg.append(t); }
+  return svg;
+}
+
+function donut(b) {
+  const parts = [["E-mail", b.email_pro, "var(--teal)"], ["Téléphone", b.telephone, "var(--teal2)"], ["Formulaire", b.formulaire, "var(--corail)"], ["Sans contact", b.aucun, "var(--gris)"]];
+  const tot = parts.reduce((a, p) => a + p[1], 0) || 1, R = 52, C = 2 * Math.PI * R;
+  const svg = s("svg", { viewBox: "0 0 132 132", width: "100%", role: "img", "aria-label": "Répartition des canaux de contact" });
+  let off = 0;
+  for (const [, v, c] of parts) { svg.append(s("circle", { cx: 66, cy: 66, r: R, fill: "none", stroke: c, "stroke-width": 18, "stroke-dasharray": `${v / tot * C} ${C}`, "stroke-dashoffset": -off, transform: "rotate(-90 66 66)" })); off += v / tot * C; }
+  const t = s("text", { x: 66, y: 66, "text-anchor": "middle", style: "font:800 20px 'Bricolage Grotesque',sans-serif;fill:var(--encre)" }); t.textContent = fr.format(tot);
+  const t2 = s("text", { x: 66, y: 82, "text-anchor": "middle" }); t2.textContent = "boutiques";
+  svg.append(t, t2);
+  $("donut").replaceChildren(svg);
+  $("donutLegende").replaceChildren(...parts.map(([n, v, c]) => el("span", {}, el("b", { style: `background:${c}` }), `${n} · ${fr.format(v)} (${Math.round(v / tot * 100)} %)`)));
+}
+
+function activite(pj) {
+  const jours = Object.keys(pj), W = 320, H = 150, P = { g: 8, b: 22, h: 8 };
+  const svg = s("svg", { viewBox: `0 0 ${W} ${H}`, width: "100%", role: "img", "aria-label": "Actions de Gemma par jour" });
+  const max = Math.max(1, ...jours.map(j => Object.values(pj[j]).reduce((a, b) => a + b, 0)));
+  const pas = (W - P.g * 2) / Math.max(1, jours.length), bw = Math.min(42, pas - 10);
+  jours.forEach((j, i) => {
+    const x = P.g + i * pas + (pas - bw) / 2; let y = H - P.b;
+    for (const [act, n] of Object.entries(pj[j])) { const hh = n / max * (H - P.b - P.h); y -= hh; svg.append(s("rect", { x, y, width: bw, height: Math.max(hh - 1.5, 1), rx: 4, fill: (ACTIONS[act] || {}).c || "var(--gris)" })); }
+    const tot = Object.values(pj[j]).reduce((a, b) => a + b, 0);
+    const v = s("text", { x: x + bw / 2, y: y - 4, "text-anchor": "middle" }); v.textContent = tot; svg.append(v);
+    const t = s("text", { x: x + bw / 2, y: H - 6, "text-anchor": "middle" }); t.textContent = jour(j + "T12:00"); svg.append(t);
+  });
+  $("activite").replaceChildren(svg);
+  const vues = new Set(jours.flatMap(j => Object.keys(pj[j])));
+  $("activiteLegende").replaceChildren(...[...vues].map(a => el("span", {}, el("b", { style: `background:${(ACTIONS[a] || {}).c || "var(--gris)"}` }), (ACTIONS[a] || { nom: a }).nom)));
+}
+
+function budget(ap) {
+  const reste = ap.reste ?? 0, R = 56, C = 2 * Math.PI * R, utilisable = Math.max(0, reste - ap.plancher);
+  const svg = s("svg", { viewBox: "0 0 132 132", width: "132", height: "132", role: "img", "aria-label": "Budget Apify restant" });
+  svg.append(s("circle", { cx: 66, cy: 66, r: R, fill: "none", stroke: "var(--bg2)", "stroke-width": 12 }));
+  svg.append(s("circle", { cx: 66, cy: 66, r: R, fill: "none", stroke: "var(--teal)", "stroke-width": 12, "stroke-linecap": "round", "stroke-dasharray": `${Math.min(1, reste / ap.forfait) * C} ${C}`, transform: "rotate(-90 66 66)" }));
+  svg.append(s("circle", { cx: 66, cy: 66, r: R, fill: "none", stroke: "var(--corail)", "stroke-width": 12, "stroke-dasharray": `${ap.plancher / ap.forfait * C} ${C}`, transform: "rotate(-90 66 66)", opacity: ".55" }));
+  const box = el("div", { class: "anneau" }, svg, el("div", { class: "centre" }, el("div", {}, el("b", { class: "num" }, reste.toFixed(2).replace(".", ",") + " $"), el("span", {}, "restants"))));
+  $("budget").replaceChildren(box, el("div", { class: "legende", style: "justify-content:center" }, el("span", {}, el("b", { style: "background:var(--teal)" }), "restant"), el("span", {}, el("b", { style: "background:var(--corail);opacity:.55" }), `réserve ${ap.plancher} $`), el("span", {}, `utilisable : ${utilisable.toFixed(2).replace(".", ",")} $`)));
+}
+
+function gestes(d) {
+  const g = [];
+  const att = d.etat.messages_en_attente_d_envoi || 0;
+  if (att) g.push(["✉", "var(--teal)", `${fr.format(att)} messages prêts à partir`, "Écris « brouillons » à Claude : ils arrivent dans Gmail, tu les envoies depuis le téléphone."]);
+  if (!d.etat.envoi_autorise) g.push(["⚿", "var(--alerte)", "Ouvrir l'envoi automatique", "Au retour au PC : le mot de passe d'application Google. Gemma enverra alors seul, 40 par jour au plus."]);
+  if (d.fichiers.forums) g.push(["✎", "var(--prune)", `${d.fichiers.reponses_forum} réponses de forum à relire`, `Dans ${d.fichiers.forums} : relis-les, puis poste celles qui te vont depuis ton compte.`]);
+  if (d.fichiers.canaux) g.push(["☎", "var(--corail)", "Formulaires, appels et Instagram", `Dans ${d.fichiers.canaux} : une boutique par ligne, avec le message ou le script.`]);
+  g.push(["■", "var(--ko)", "Arrêter Gemma", "Demande-le à Claude : un fichier STOP l'arrête au cycle suivant."]);
+  $("gestes").replaceChildren(...g.map(([ic, c, t, p]) => el("div", { class: "geste" }, el("div", { class: "ic", style: `--c:${c}` }, ic), el("div", {}, el("strong", {}, t), el("p", {}, p)))));
+}
+
+let toutVoir = false;
+function journal(cycles) {
+  const liste = toutVoir ? cycles : cycles.slice(0, 12);
+  $("journal").replaceChildren(...liste.map(c => {
+    const a = ACTIONS[c.action] || { nom: c.action, c: "var(--gris)" };
+    return el("div", { class: "cycle" + (c.ok ? "" : " echec") },
+      el("div", { class: "h" }, c.h.slice(11, 16), el("small", {}, jour(c.h))),
+      el("div", {}, el("span", { class: "puce", style: `--c:${a.c}` }, a.nom), el("span", { class: "par" }, c.source === "gemma" ? "Gemma" : "règle fixe"),
+        el("div", { class: "res" }, c.resultat), c.raison ? el("div", { class: "rai" }, `« ${c.raison} »`) : ""));
+  }));
+  $("plus").hidden = toutVoir || cycles.length <= 12;
+}
+
+async function demarrer() {
+  const cle = lireCle();
+  if (!cle) { $("verrou").hidden = false; $("majTexte").textContent = "verrouillé"; return; }
+  let derniere = null;
+  const tour = async () => {
+    try { derniere = await charger(cle); rendre(derniere); $("app").hidden = false; $("verrou").hidden = true; }
+    catch (e) {
+      if (!derniere) { $("verrou").hidden = false; $("verrouTexte").textContent = "Impossible de déchiffrer : ouvre à nouveau ton lien personnel complet. (" + e.message + ")"; try { localStorage.removeItem(CLE_STOCKAGE); } catch (_) {} }
+      $("majTexte").textContent = "hors ligne"; $("pointDirect").className = "point ko";
+    }
+  };
+  await tour();
+  setInterval(tour, 60000);
+  setInterval(() => derniere && rendre(derniere), 30000);
+  document.addEventListener("visibilitychange", () => document.visibilityState === "visible" && tour());
+  $("plus").addEventListener("click", () => { toutVoir = true; derniere && journal(derniere.cycles); });
+}
+demarrer();
+</script>
+</body>
+</html>
